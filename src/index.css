@@ -1,0 +1,86 @@
+/* Layout Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.left-pane {
+  width: 20%;
+  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  padding: 16px;
+}
+
+.right-pane {
+  flex-grow: 1;
+  background-color: #f0f0f0;
+  padding: 16px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+/* Styling for TablePanel and list items */
+.left-pane {
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.left-pane h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul li {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+ul li:hover {
+  background-color: #f0f4f8;
+  border-color: #aaa;
+}
+
+ul li .faPlus {
+  margin-right: 10px;
+  color: #007bff;
+  font-size: 1.2rem;
+}
+
+ul li span {
+  font-weight: bold;
+  color: #333;
+}
+.selected-card {
+  border: 2px solid #007bff !important; /* Blue border for selected card */
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5) !important; /* Highlight shadow */
+  background-color: #e6f0ff !important; /* Light blue background for selected card */
+}
+
+.right-pane .selected-card {
+  border: 2px solid #007bff; /* Blue border for selected card */
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* Highlight shadow */
+  background-color: #e6f0ff; /* Light blue background for selected card */
+  transform: scale(1.05); /* Optional: Slightly enlarge selected card */
+}
