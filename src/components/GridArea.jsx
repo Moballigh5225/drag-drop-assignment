@@ -7,6 +7,9 @@ const GridArea = ({ data, removeTable }) => {
   const [resizingCardId, setResizingCardId] = useState(null);
   const [initialMouseX, setInitialMouseX] = useState(0);
   const [initialWidth, setInitialWidth] = useState(0);
+  const [draggingCardId, setDraggingCardId] = useState(null);
+  const [draggingOffsetX, setDraggingOffsetX] = useState(0);
+  const [draggingOffsetY, setDraggingOffsetY] = useState(0);
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -26,11 +29,12 @@ const GridArea = ({ data, removeTable }) => {
           name: table.name,
           columns: table.columns,
           width: 200, // initial width
+          left: 0, // initial position
+          top: 0, // initial position
         },
       ]);
 
       removeTable(tableId);
-
       setSelectedCardId(tableId);
     }
   };
@@ -65,17 +69,46 @@ const GridArea = ({ data, removeTable }) => {
     }
   };
 
+  const startDrag = (event, cardId) => {
+    event.preventDefault();
+    setDraggingCardId(cardId);
+
+    // Capture initial mouse position and offset relative to the card
+    const card = cards.find((card) => card.id === cardId);
+    setDraggingOffsetX(event.clientX - card.left);
+    setDraggingOffsetY(event.clientY - card.top);
+  };
+
+  const stopDrag = (event) => {
+    // Calculate the new position of the table on mouse release
+    if (draggingCardId) {
+      const newLeft = event.clientX - draggingOffsetX;
+      const newTop = event.clientY - draggingOffsetY;
+
+      // Update the position of the card
+      setCards((prevCards) =>
+        prevCards.map((card) =>
+          card.id === draggingCardId
+            ? { ...card, left: newLeft, top: newTop }
+            : card
+        )
+      );
+    }
+
+    setDraggingCardId(null);
+  };
+
   React.useEffect(() => {
-    if (resizing) {
+    if (resizing || draggingCardId) {
       window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", stopResize);
+      window.addEventListener("mouseup", stopDrag);
     }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", stopResize);
+      window.removeEventListener("mouseup", stopDrag);
     };
-  }, [resizing]);
+  }, [resizing, draggingCardId]);
 
   return (
     <div
@@ -87,6 +120,9 @@ const GridArea = ({ data, removeTable }) => {
         borderRadius: "8px",
         padding: "16px",
         textAlign: "center",
+        position: "relative", // ensure proper stacking of draggable elements
+        overflow: "auto",
+        height: "100%",
       }}
     >
       <h2>Grid Area</h2>
@@ -98,6 +134,7 @@ const GridArea = ({ data, removeTable }) => {
           display: "flex",
           flexWrap: "wrap",
           gap: "20px",
+          position: "relative",
         }}
       >
         {cards.map((card) => (
@@ -116,8 +153,11 @@ const GridArea = ({ data, removeTable }) => {
               alignItems: "flex-start",
               cursor: "pointer",
               transition: "all 0.3s ease",
-              position: "relative",
+              position: "absolute", // absolute positioning for drag movement
+              left: `${card.left}px`,
+              top: `${card.top}px`,
             }}
+            onMouseDown={(e) => startDrag(e, card.id)} // Start dragging on mouse down
           >
             <h3
               style={{
